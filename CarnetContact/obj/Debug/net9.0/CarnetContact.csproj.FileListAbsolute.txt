@@ -1,0 +1,14 @@
+/Users/alexisdupont/RiderProjects/CarnetContact/CarnetContact/bin/Debug/net9.0/CarnetContact
+/Users/alexisdupont/RiderProjects/CarnetContact/CarnetContact/bin/Debug/net9.0/CarnetContact.deps.json
+/Users/alexisdupont/RiderProjects/CarnetContact/CarnetContact/bin/Debug/net9.0/CarnetContact.runtimeconfig.json
+/Users/alexisdupont/RiderProjects/CarnetContact/CarnetContact/bin/Debug/net9.0/CarnetContact.dll
+/Users/alexisdupont/RiderProjects/CarnetContact/CarnetContact/bin/Debug/net9.0/CarnetContact.pdb
+/Users/alexisdupont/RiderProjects/CarnetContact/CarnetContact/obj/Debug/net9.0/CarnetContact.GeneratedMSBuildEditorConfig.editorconfig
+/Users/alexisdupont/RiderProjects/CarnetContact/CarnetContact/obj/Debug/net9.0/CarnetContact.AssemblyInfoInputs.cache
+/Users/alexisdupont/RiderProjects/CarnetContact/CarnetContact/obj/Debug/net9.0/CarnetContact.AssemblyInfo.cs
+/Users/alexisdupont/RiderProjects/CarnetContact/CarnetContact/obj/Debug/net9.0/CarnetContact.csproj.CoreCompileInputs.cache
+/Users/alexisdupont/RiderProjects/CarnetContact/CarnetContact/obj/Debug/net9.0/CarnetContact.dll
+/Users/alexisdupont/RiderProjects/CarnetContact/CarnetContact/obj/Debug/net9.0/refint/CarnetContact.dll
+/Users/alexisdupont/RiderProjects/CarnetContact/CarnetContact/obj/Debug/net9.0/CarnetContact.pdb
+/Users/alexisdupont/RiderProjects/CarnetContact/CarnetContact/obj/Debug/net9.0/CarnetContact.genruntimeconfig.cache
+/Users/alexisdupont/RiderProjects/CarnetContact/CarnetContact/obj/Debug/net9.0/ref/CarnetContact.dll
