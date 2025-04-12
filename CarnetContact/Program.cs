@@ -4,21 +4,16 @@ using CarnetContact;
 /******************************************************* A FAIRE *******************************************************
  - apporter modifications pour qu'il y ait une creation d'utilisateur pour avoir des listes personnelles
  - faire en sorte que quand on se connecte a un utilisateur ca enregistre les contacts dans son dossier
- - regarder si un fichier user existe sinon en creer un nouveau et demander le nom qu'on lui donne
- - coder la fonction supprimerContact
+ - regarder si un fichier user existe sinon en créer un nouveau et demander le nom qu'on lui donne
  - coder la fonction afficherInfoUtilisateur
- - peut etre coder une fonction qui liste tout les utilisateurs (regarder le nombre de dossier dans utilisateur)
+ - coder une fonction qui liste tous les utilisateurs (regarder le nombre de dossiers dans le dossier utilisateur)
+ - coder une fonction qui modifie les informations d'un utilisateur
+ - coder une fonction qui creer un nouel utilisateur
+ - coder une fonction qui change de dossier de sauvegarde (changer d'utilisateur)
+ - coder une fonction qui supprime un utilisateur
 */
 public class Program
 {
-    
-    // a coder pour que ca génere un nombre random qui n'existe pas deja
-    public static int definirId()
-    {
-        int id = 1;
-        return id;
-    }
-    
     // fonction pour ajouter les contacts au carnet
     public static void ajouterContact(List<Contact> carnet)
     {
@@ -28,18 +23,37 @@ public class Program
         String prenom = Console.ReadLine();
         Console.WriteLine("entre le mail du contact");
         String email = Console.ReadLine();
-        int id = definirId();
-        Contact newContact = new Contact(nom, prenom, email, 1);
+        Console.WriteLine("entre le numero du contact");
+        int numero = int.Parse(Console.ReadLine());
+        Contact newContact = new Contact(nom, prenom, email, numero);
         carnet.Add(newContact);
     }
     
-    // fontcion pour afficher tout les contacts
+    // fonction pour afficher tous les contacts
     public static void afficherContacts(List<Contact> contacts)
     {
         for (int i = 0; i < contacts.Count; i++)
         {
             Console.WriteLine((i + 1) + ". " + contacts[i].getNom());
         }
+    }
+    
+    // fonction qui retourne le numero d'un potentiel compte
+    public static int retournerNum()
+    {
+        Console.WriteLine("entre le numero du contact");
+        return int.Parse(Console.ReadLine());
+    }
+
+    public static Contact retournerContact(List<Contact> carnet)
+    {
+        int num = retournerNum();
+        for (int i = 0; i < carnet.Count; i++)
+        {
+            if (carnet[i].getNum() == num)
+                return carnet[i];
+        }
+        return null;
     }
 
     // fonction pour afficher les infos de 1 contact
@@ -50,46 +64,31 @@ public class Program
         Console.WriteLine("Mail : " + contact.getEmail());
         Console.WriteLine("Numero : " + contact.getNum());
     }
-
-    public static Contact compteTrouver(Contact contact, List<Contact> carnet)
-    {
-        foreach (Contact c in carnet)
-        {
-            if (c.getNom() == contact.getNom())
-                return c;
-        }
-        return null;
-    }
     
-    // fonction pour chercher un contact dans le carnet
-    public static void chercherContacts(List<Contact> carnet)
+    // fonction pour trouver l'index d'un compte
+    public static int indexCompte(int num, List<Contact> carnet)
     {
-        Console.WriteLine("quelle est le numero du contact que tu cherche");
-        int num = int.Parse(Console.ReadLine());
-        int count = 0;
-        foreach (var contact in carnet)
+        for (int i = 0; i < carnet.Count; i++)
         {
-            if (contact.getNum() == num)
-            {
-                afficherInfoContact(contact);
-                count++;
-            }
+            if (carnet[i].getNum() == num)
+                return i;
         }
-        if (count == 0)
-            Console.WriteLine("le contact n'existe pas");
+        return -1;
     }
 
     // fonction pour supprimer des contacts
-    public static void supprimerContacts(Contact contact, List<Contact> carnet)
+    public static void supprimerContacts(int num, List<Contact> carnet)
     {
-        
+        int index = indexCompte(num, carnet);
+        if (index!= -1)
+            carnet.RemoveAt(index);
+        else
+            Console.WriteLine("impossible de supprimer le compte car il n'existe pas");
     }
 
     // fonction pour modifier des contacts
-    public static void modifierContacts(List<Contact> carnet)
+    public static void modifierContacts(int num, List<Contact> carnet)
     {
-        Console.WriteLine("entre le numerot du contact que tu veux modifier");
-        int num = int.Parse(Console.ReadLine());
         int choix = 0;
         foreach (var contact in carnet)
         {
@@ -124,7 +123,7 @@ public class Program
                             contact.setNum(int.Parse(Console.ReadLine()));
                             break;
                         case 5:
-                            supprimerContacts(contact, carnet);
+                            supprimerContacts(num, carnet);
                             ajouterContact(carnet);
                             break;
                     }
@@ -132,9 +131,39 @@ public class Program
             }
         }
     }
+    
+    // fonction qui affiche un message d'aide à l'utilisation du programme
+    public static void afficherHelp()
+    {
+        Console.WriteLine("message d'aide");
+    }
 
     // fonction pour afficher les infos sur un utilisateur
-    public static void afficherInfoUtilisateur()
+    public static void afficherInfoUtilisateur(Utilisateur usr)
+    {
+        Console.WriteLine($"nom d'utilisateur {usr.getNomUser}");
+    }
+
+    // fonction pour modifier les infos sur un utilisateur
+    public static void modifierInfoUtilisateur()
+    {
+        
+    }
+
+    // fonction pour creer un nouvel utilisateur
+    public static void creerUtilisateur()
+    {
+        
+    }
+
+    // fonction pour changer d'utilisateur
+    public static void changerUtilisateur()
+    {
+        
+    }
+
+    // fonction pour supprimer un utilisateur
+    public static void supprimerUtilisateur()
     {
         
     }
@@ -148,6 +177,9 @@ public class Program
         Console.WriteLine("5. Afficher les info d'un contact");
         // Console.WriteLine("6. Afficher les infos d'un utilisateur");
         // Console.WriteLine("7. Modifier les infos d'un utilisateur");
+        // Console.WriteLine("8. Créer un utilisateur");
+        // Console.WriteLine("9. Changer d'utilisateur");
+        // Console.WriteLine("10. Supprimer un utilisateur");
         Console.WriteLine("6. help");
         Console.WriteLine("7. quitter");
     }
@@ -156,13 +188,33 @@ public class Program
     {
         List<Contact> carnet = new List<Contact>();
         int choix = 0;
+        int num;
         while (choix != 7)
         {
             menu();
             choix = int.Parse(Console.ReadLine());
             switch (choix)
             {
-                
+                case 1:
+                    ajouterContact(carnet);
+                    break;
+                case 2:
+                    num = retournerNum();
+                    supprimerContacts(num, carnet);
+                    break;
+                case 3:
+                    afficherContacts(carnet);
+                    break;
+                case 4:
+                    num = retournerNum();
+                    modifierContacts(num, carnet);
+                    break;
+                case 5:
+                    afficherInfoContact(retournerContact(carnet));
+                    break;
+                case 6:
+                    afficherHelp();
+                    break;
             }
         }
     }

@@ -12,3 +12,4 @@
 /Users/alexisdupont/RiderProjects/CarnetContact/CarnetContact/obj/Debug/net9.0/CarnetContact.pdb
 /Users/alexisdupont/RiderProjects/CarnetContact/CarnetContact/obj/Debug/net9.0/CarnetContact.genruntimeconfig.cache
 /Users/alexisdupont/RiderProjects/CarnetContact/CarnetContact/obj/Debug/net9.0/ref/CarnetContact.dll
+/Users/alexisdupont/RiderProjects/CarnetContact/CarnetContact/obj/Debug/net9.0/CarnetContact.sourcelink.json
