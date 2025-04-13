@@ -3,14 +3,10 @@ using CarnetContact;
 
 /******************************************************* A FAIRE *******************************************************
  - apporter modifications pour qu'il y ait une creation d'utilisateur pour avoir des listes personnelles
- - faire en sorte que quand on se connecte a un utilisateur ca enregistre les contacts dans son dossier
+ - faire en sorte que quand on se connecte a un utilisateur ça enregistre les contacts dans son dossier
  - regarder si un fichier user existe sinon en créer un nouveau et demander le nom qu'on lui donne
- - coder la fonction afficherInfoUtilisateur
  - coder une fonction qui liste tous les utilisateurs (regarder le nombre de dossiers dans le dossier utilisateur)
- - coder une fonction qui modifie les informations d'un utilisateur
- - coder une fonction qui creer un nouel utilisateur
  - coder une fonction qui change de dossier de sauvegarde (changer d'utilisateur)
- - coder une fonction qui supprime un utilisateur
 */
 public class Program
 {
@@ -19,11 +15,11 @@ public class Program
     {
         Console.WriteLine("entre le nom du contact");
         String nom = Console.ReadLine();
-        Console.WriteLine("entre le prenom du contact");
+        Console.WriteLine("entre le prénom du contact");
         String prenom = Console.ReadLine();
         Console.WriteLine("entre le mail du contact");
         String email = Console.ReadLine();
-        Console.WriteLine("entre le numero du contact");
+        Console.WriteLine("entre le numéro du contact");
         int numero = int.Parse(Console.ReadLine());
         Contact newContact = new Contact(nom, prenom, email, numero);
         carnet.Add(newContact);
@@ -34,17 +30,18 @@ public class Program
     {
         for (int i = 0; i < contacts.Count; i++)
         {
-            Console.WriteLine((i + 1) + ". " + contacts[i].getNom());
+            Console.WriteLine($"{i + 1}. {contacts[i].getNom()}");
         }
     }
     
-    // fonction qui retourne le numero d'un potentiel compte
+    // fonction qui retourne le numéro d'un potentiel compte
     public static int retournerNum()
     {
-        Console.WriteLine("entre le numero du contact");
+        Console.WriteLine("entre le numéro du contact");
         return int.Parse(Console.ReadLine());
     }
 
+    // fonction qui retourne un contact grâce à son numéro
     public static Contact retournerContact(List<Contact> carnet)
     {
         int num = retournerNum();
@@ -60,9 +57,9 @@ public class Program
     public static void afficherInfoContact(Contact contact)
     {
         Console.WriteLine("Nom : " + contact.getNom());
-        Console.WriteLine("Prenom : " + contact.getPrenom());
+        Console.WriteLine("Prénom : " + contact.getPrenom());
         Console.WriteLine("Mail : " + contact.getEmail());
-        Console.WriteLine("Numero : " + contact.getNum());
+        Console.WriteLine("Numéro : " + contact.getNum());
     }
     
     // fonction pour trouver l'index d'un compte
@@ -99,11 +96,11 @@ public class Program
                     choix = int.Parse(Console.ReadLine());
                     Console.WriteLine("que veux tu modifier ?");
                     Console.WriteLine("1. Nom");
-                    Console.WriteLine("2. Prenom");
-                    Console.WriteLine("3. mail");
-                    Console.WriteLine("4. numero");
-                    Console.WriteLine("5. tout");
-                    Console.WriteLine("6. retour");
+                    Console.WriteLine("2. Prénom");
+                    Console.WriteLine("3. Mail");
+                    Console.WriteLine("4. Numéro");
+                    Console.WriteLine("5. Tout");
+                    Console.WriteLine("6. Retour");
                     switch (choix)
                     {
                         case 1:
@@ -111,7 +108,7 @@ public class Program
                             contact.setNom(Console.ReadLine());
                             break;
                         case 2:
-                            Console.WriteLine("quel Prenom veux tu donner a ce contact");
+                            Console.WriteLine("quel Prénom veux tu donner a ce contact");
                             contact.setPrenom(Console.ReadLine());
                             break;
                         case 3:
@@ -119,7 +116,7 @@ public class Program
                             contact.setEmail(Console.ReadLine());
                             break;
                         case 4:
-                            Console.WriteLine("quel Numero veux tu donner a ce contact");
+                            Console.WriteLine("quel Numéro veux tu donner a ce contact");
                             contact.setNum(int.Parse(Console.ReadLine()));
                             break;
                         case 5:
@@ -131,6 +128,14 @@ public class Program
             }
         }
     }
+
+    public static void listerUtilisateurs(List<Utilisateur> utilisateurs)
+    {
+        for (int i = 0; i < utilisateurs.Count; i++)
+        {
+            Console.WriteLine($"{i + 1}. {utilisateurs[i].getNomUser()}");
+        }
+    }
     
     // fonction qui affiche un message d'aide à l'utilisation du programme
     public static void afficherHelp()
@@ -138,36 +143,69 @@ public class Program
         Console.WriteLine("message d'aide");
     }
 
-    // fonction pour afficher les infos sur un utilisateur
+    // trouve l'index auquel est enregistré un utilisateur
+    public static int indexUtilisateur(String nom, List<Utilisateur> utilisateurs)
+    {
+        for (int i = 0; i < utilisateurs.Count; i++)
+        {
+            if (utilisateurs[i].getNomUser().Equals(nom))
+                return i;
+        }
+        return -1;
+    }
+
+        // fonction pour afficher les infos sur un utilisateur
     public static void afficherInfoUtilisateur(Utilisateur usr)
     {
         Console.WriteLine($"nom d'utilisateur {usr.getNomUser}");
     }
 
     // fonction pour modifier les infos sur un utilisateur
-    public static void modifierInfoUtilisateur()
+    public static void modifierInfoUtilisateur(Utilisateur usr)
     {
-        
+        Console.WriteLine("quel nom veux tu donner a cet utilisateur");
+        usr.setNomUser(Console.ReadLine());
     }
 
-    // fonction pour creer un nouvel utilisateur
-    public static void creerUtilisateur()
+    // fonction pour créer un nouvel utilisateur
+    public static void creerUtilisateur(String nom, List<Utilisateur> utilisateurs)
     {
-        
+        Utilisateur usr = new Utilisateur(nom);
+        utilisateurs.Add(usr);
+    }
+    
+    // fonction qui retourne un utilisateur en fonction de son index
+    public static Utilisateur retournerUtilisateur(int index, List<Utilisateur> utilisateurs)
+    {
+        return utilisateurs[index];
     }
 
     // fonction pour changer d'utilisateur
-    public static void changerUtilisateur()
+    public static String changerUtilisateur(String CurrentUtilisateur, List<Utilisateur> utilisateurs)
     {
-        
+        Console.WriteLine($"L'utilisateur actuellement connecté est {CurrentUtilisateur}");
+        Console.WriteLine("a quel utilisateur veux tu te connecter ?");
+        String nom = Console.ReadLine();
+        int index = indexUtilisateur(nom, utilisateurs);
+        if (index != -1)
+            return nom;
+        Console.WriteLine("cet utilisateur n'existe pas");
+        return null;
     }
 
     // fonction pour supprimer un utilisateur
-    public static void supprimerUtilisateur()
+    public static void supprimerUtilisateur(List<Utilisateur> utilisateurs)
     {
-        
+        Console.WriteLine("quel est le nom de l'utilisateur que tu veux supprimer ?");
+        String nom = Console.ReadLine();
+        int index = indexUtilisateur(nom, utilisateurs);
+        if (index != -1)
+            utilisateurs.RemoveAt(index);
+        else
+            Console.WriteLine("l'utilisateur n'existe pas");
     }
 
+    // fonction qui affiche le menu
     public static void menu()
     {
         Console.WriteLine("1. Ajouter un contact");
@@ -175,21 +213,26 @@ public class Program
         Console.WriteLine("3. Afficher les contacts");
         Console.WriteLine("4. Modifier un contact");
         Console.WriteLine("5. Afficher les info d'un contact");
-        // Console.WriteLine("6. Afficher les infos d'un utilisateur");
-        // Console.WriteLine("7. Modifier les infos d'un utilisateur");
-        // Console.WriteLine("8. Créer un utilisateur");
-        // Console.WriteLine("9. Changer d'utilisateur");
-        // Console.WriteLine("10. Supprimer un utilisateur");
-        Console.WriteLine("6. help");
-        Console.WriteLine("7. quitter");
+        Console.WriteLine("6. Modifier les infos d'un utilisateur"); //
+        Console.WriteLine("7. Créer un utilisateur"); //
+        Console.WriteLine("8. Changer d'utilisateur"); //
+        Console.WriteLine("9. Supprimer un utilisateur"); //
+        Console.WriteLine("10. help");
+        Console.WriteLine("11. quitter");
     }
     
     public static void Main(string[] args)
     {
+        // si un fichier carnet existe deja mettre tous les contacts dans la liste
         List<Contact> carnet = new List<Contact>();
+        // si dosser existe deja dans le dossier utilisateurs alors remplir la liste avec le nom des dossiers
+        List<Utilisateur> utilisateurs = new List<Utilisateur>();
         int choix = 0;
         int num;
-        while (choix != 7)
+        String currentUtilisateur = "test"; // a changer
+        String nom;
+        int index;
+        while (choix != 11)
         {
             menu();
             choix = int.Parse(Console.ReadLine());
@@ -213,6 +256,34 @@ public class Program
                     afficherInfoContact(retournerContact(carnet));
                     break;
                 case 6:
+                    Console.WriteLine("quel est le nom de l'utilisateur que tu veux modifier ?");
+                    nom = Console.ReadLine();
+                    Utilisateur usr;
+                    index = indexUtilisateur(nom, utilisateurs);
+                    if (index != -1)
+                        usr = utilisateurs[index];
+                    else
+                        Console.WriteLine("l'utilisateur n'existe pas");
+                    break;
+                case 7:
+                    Console.WriteLine("quel nom veux tu donner a ton utilisateur ?");
+                    nom = Console.ReadLine();
+                    creerUtilisateur(nom, utilisateurs);
+                    Console.WriteLine("veux tu changer d'utilisateur ?");
+                    if (Console.ReadKey().Key == ConsoleKey.Y)
+                        changerUtilisateur(currentUtilisateur, utilisateurs);
+                    break;
+                case 8:
+                    changerUtilisateur(currentUtilisateur, utilisateurs);
+                    break;
+                case 9:
+                    Console.WriteLine("quel est le nom de l'utilisateur que tu veux modifier ?");
+                    nom = Console.ReadLine();
+                    index = indexUtilisateur(nom, utilisateurs);
+                    if (index != -1)
+                        utilisateurs.RemoveAt(index);
+                    break;
+                case 10:
                     afficherHelp();
                     break;
             }
