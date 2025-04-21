@@ -54,12 +54,5 @@ public class Contact
     {
         this.num = num;
     }
-
-    public void setAll(String nom, String prenom, String email, int num)
-    {
-        this.nom = nom;
-        this.prenom = prenom;
-        this.email = email;
-        this.num = num;
-    }
+    
 }
