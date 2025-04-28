@@ -2,57 +2,57 @@ namespace CarnetContact;
 
 public class Contact
 {
-    private String nom;
-    private String prenom;
-    private String email;
-    private int num;
+    public string Nom { get; set; }
+    public string Prenom { get; set; }
+    public string Email { get; set; }
+    public int Num { get; set; }
 
     public Contact(String nom, String prenom, String email, int num)
     {
-        this.nom = nom;
-        this.prenom = prenom;
-        this.email = email;
-        this.num = num;
+        this.Nom = nom;
+        this.Prenom = prenom;
+        this.Email = email;
+        this.Num = num;
     }
 
     public String getNom()
     {
-        return this.nom;
+        return Nom;
     }
 
     public String getPrenom()
     {
-        return this.prenom;
+        return this.Prenom;
     }
 
     public String getEmail()
     {
-        return this.email;
+        return this.Email;
     }
 
     public int getNum()
     {
-        return this.num;
+        return this.Num;
     }
 
     public void setNom(String nom)
     {
-        this.nom = nom;
+        this.Nom = nom;
     }
 
     public void setPrenom(String prenom)
     {
-        this.prenom = prenom;
+        this.Prenom = prenom;
     }
 
     public void setEmail(String email)
     {
-        this.email = email;
+        this.Email = email;
     }
 
     public void setNum(int num)
     {
-        this.num = num;
+        this.Num = num;
     }
     
 }

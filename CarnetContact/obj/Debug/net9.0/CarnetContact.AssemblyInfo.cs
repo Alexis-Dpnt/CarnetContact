@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CarnetContact")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b8b4c2c88a37be23191d5393e5edac1a4b8706b2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dadb4ddbc9bdb7ec451ff9b54ecf001ad721ea90")]
 [assembly: System.Reflection.AssemblyProductAttribute("CarnetContact")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CarnetContact")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,36 +1,25 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using CarnetContact;
+using System.Text.Json;
 
 /******************************************************* A FAIRE *******************************************************
- - faire en sorte que quand on se connecte a un utilisateur ça enregistre les contacts dans son dossier
- - faire un système de sauvegarde pour les contacts
- - faire un système de sauvegarde pour les utilisateurs
- - faire un système de sauvegarde pour le carnet
- - coder une fonction qui regarde si le carnet existe ou pas
- - coder une fonction qui regarde si l'utilisateur existe ou pas
- - coder une fonction qui regarde si le contact existe ou pas
- - faire un systeme d'authentification (peut etre plus tard)
- - faire un systeme de confirmation avant de supprimer un contact
- - faire un systeme de confirmation avant de supprimer un utilisateur
- - coder une fonction qui liste tous les utilisateurs (regarder le nombre de dossiers dans le dossier utilisateur)
- - coder tout le système de gestions des utilisateurs
- - système de mots de passes associé à chaques utilisateurs ???
- - mettre les consoles.clear
+ - coder une fonction qui regarde si le contact existe ou pas grace a son num
+ - système de mots de passes associé à chaque utilisateur ???
+ - soigner l'affichage
+ - mettre les commentaires au dessus de toutes les fonctions
  
  ajouterContact :
-  - faire systeme qui regarde si le numero existe deja dans le tableau (peut etre base de donnee plus tard)
-
- supprimerContact :
-  - message de verification avec info contact qui s'affiche pour savoir si c'est bien le bon contact
+  - faire système qui regarde si le numéro existe deja dans la liste (peut être base de donnee plus tard)
  
  creerUtilisateur :
   - message qui dit que l'utilisateur existe deja puis propose de mettre un autre nom
   
- changerUtilisateur : 
-  - peut etre passer le type de la fonction en Utilisateur
+ case 7 :
+  - faire en sorte que ca vienne caherger le nouveau carnet si un chanagement d'utilisateur est effectué
   
- existeFile :
-  - a modifier car il faut que le parametre soit un chemin vers le fichier recherché
+ case 9 :
+  - faire en sorte que quand on change d'utilisateur ca charge le nouveau carnet
+  
 */
 public class Program
 {
@@ -264,9 +253,10 @@ public class Program
     }
     
     // fonction qui regarde si un fichier existe
-    public static bool existeFile(String nom)
+    public static bool existeFile(String nom, String chemin)
     {
-        if (File.Exists(nom))
+        String path = Path.Combine(chemin, nom);
+        if (File.Exists(path))
             return true;
         return false;
     }
@@ -295,15 +285,35 @@ public class Program
     }
 
     // ouvre le fichier a Utilisateurs/chemin puis remplis la liste avec les contacts du fichier
-    public static void remplirCarnet(List<Contact> carnet, String chemin)
+ public static List<Contact> remplirCarnet(String chemin)
+ {
+     String path = Path.Combine(chemin, "contact.json");
+     try
+     {
+         return JsonSerializer.Deserialize<List<Contact>>(File.ReadAllText(path)) ?? new List<Contact>();
+     }
+     catch (Exception ex)
+     {
+         Console.WriteLine($"Erreur lors de la désérialisation : {ex.Message}");
+         return new List<Contact>();
+     }
+ }
+
+    public static int supprimerDir(String nom, String chemin)
     {
-        String path = Path.Combine(Directory.GetCurrentDirectory(), "Utilisateurs");
-        String completePath = Path.Combine(path, chemin);
-        // ouvrir le fichier carnet et faire une boucle pour que tout se mette dans la liste
-        // Json peut etre la meilleure solution car ca prend le json et ca le met directement en tableau
+        String path = Path.Combine(chemin, nom);
+        Directory.Delete(path);
+        if (existeDir(nom, chemin))
+            return -1;
+        return 0;
     }
-    
-    
+
+    public static void toJson(List<Contact> contacts, String chemin)
+    {
+        String json = JsonSerializer.Serialize(contacts);
+        String path = Path.Combine(chemin, "contact.json");
+        File.WriteAllText(path, json);
+    }
     
     // fonction qui affiche le menu
     public static void menu()
@@ -345,7 +355,6 @@ public class Program
             currentUtilisateur = Console.ReadLine();
             if (existeDir(currentUtilisateur, cheminCarnet))
             {
-                // pour que le chemin soit Utilisateurs/NOM_UTILISATEUR
                 cheminEnregistrement = Path.Combine(cheminCarnet, currentUtilisateur);
                 Console.WriteLine("connection effectuée");
             }
@@ -353,6 +362,7 @@ public class Program
             {
                 Console.WriteLine("connection fail");
                 currentUtilisateur = "";
+                return;
             }
         }
         else
@@ -364,16 +374,27 @@ public class Program
                 currentUtilisateur = nom;
             else
             {
-                Console.WriteLine("impossible de creer l'utilisateur");
+                Console.WriteLine("impossible de créer l'utilisateur");
                 if (utilisateurs.Count > 0)
                     utilisateurs.RemoveAt(utilisateurs.Count - 1);
+                return;
             }
         }
         
-        if (existeFile("carnet"))
+        if (existeFile("contact.json", cheminEnregistrement))
         {
-            Console.WriteLine("test"); // a coder
-            remplirCarnet(carnet, currentUtilisateur);
+            carnet = remplirCarnet(cheminEnregistrement);
+        }
+        else
+        {
+            File.Create(Path.Combine(cheminEnregistrement, "contact.json"));
+            if (File.Exists(Path.Combine(cheminEnregistrement, "contact.json")))
+                Console.WriteLine("fichier creer avec succes");
+            else
+            {
+                Console.WriteLine("le fichier na pas pu etre creer");
+                return;
+            }
         }
         
         while (choix != 12)
@@ -384,10 +405,12 @@ public class Program
             {
                 case 1:
                     ajouterContact(carnet);
+                    toJson(carnet, cheminEnregistrement);
                     break;
                 case 2:
                     num = retournerNum();
                     supprimerContacts(num, carnet);
+                    toJson(carnet, cheminEnregistrement);
                     break;
                 case 3:
                     afficherContacts(carnet);
@@ -395,6 +418,7 @@ public class Program
                 case 4:
                     num = retournerNum();
                     modifierContacts(num, carnet);
+                    toJson(carnet, cheminEnregistrement);
                     break;
                 case 5:
                     afficherInfoContact(retournerContact(carnet));
@@ -418,14 +442,28 @@ public class Program
                     Console.WriteLine("quel nom veux tu donner a ton utilisateur ?");
                     nom = Console.ReadLine();
                     creerUtilisateur(nom, utilisateurs);
+                    if (creerDir(nom, cheminCarnet) != -1)
+                        currentUtilisateur = nom;
+                    else
+                    {
+                        Console.WriteLine("impossible de créer l'utilisateur");
+                        if (utilisateurs.Count > 0)
+                            utilisateurs.RemoveAt(utilisateurs.Count - 1);
+                        return;
+                    }
                     Console.WriteLine("veux tu changer d'utilisateur ?");
                     if (Console.ReadKey().Key == ConsoleKey.Y)
                     {
                         utilisateurChange = changerUtilisateur(currentUtilisateur, utilisateurs);
                         if (utilisateurChange != null)
                         {
-                            Console.WriteLine($"vous etes maintenant connecté en tant que {utilisateurChange}");
-                            currentUtilisateur = utilisateurChange;
+                            if (existeFile(utilisateurChange, cheminCarnet))
+                            {
+                                Console.WriteLine($"vous etes maintenant connecté en tant que {utilisateurChange}");
+                                currentUtilisateur = utilisateurChange;
+                            }
+                            else
+                                Console.WriteLine("l'utilisateur n'existe pas");
                         }
                     }
                     
@@ -438,8 +476,14 @@ public class Program
                     utilisateurChange = changerUtilisateur(currentUtilisateur, utilisateurs);
                     if (utilisateurChange != null)
                     {
-                        Console.WriteLine($"vous etes maintenant connecté en tant que {utilisateurChange}");
-                        currentUtilisateur = utilisateurChange;
+                        if (existeFile(utilisateurChange, cheminCarnet))
+                        {
+                            Console.WriteLine($"vous etes maintenant connecté en tant que {utilisateurChange}");
+                            currentUtilisateur = utilisateurChange;
+                            cheminEnregistrement = Path.Combine(cheminCarnet, currentUtilisateur);
+                        }
+                        else
+                            Console.WriteLine("l'utilisateur n'existe pas");
                     }
                     break;
                 
@@ -449,15 +493,14 @@ public class Program
                     index = indexUtilisateur(nom, utilisateurs);
                     if (index != -1)
                         utilisateurs.RemoveAt(index);
+                    if (supprimerDir(nom, cheminCarnet) != 0)
+                        Console.WriteLine("l'utilisateur n'a pas pu être supprimer");
+                    else
+                        Console.WriteLine("L'utilisateur a bien été supprimé");
                     break;
                 
                 case 11:
-                    remplirListDir(utilisateurs, cheminCarnet);
-                    foreach (Utilisateur utilisateur in utilisateurs)
-                    {
-                        Console.WriteLine(utilisateur.getNomUser());
-                    }
-                    
+                    afficherHelp();
                     break;
             }
         }
