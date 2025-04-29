@@ -361,7 +361,8 @@ public class Program
     {
         String currentUtilisateur = ""; // utilisateur en cours d'utilisation
         String utilisateurChange = ""; // variable temporaire pour faire le changement d'utilisateur
-        String cheminCarnet = Path.Combine(Directory.GetCurrentDirectory(), "Utilisateurs"); // dossier où il y a tous les dossiers utilisateurs
+        String cheminCarnet = Path.Combine(AppContext.BaseDirectory, "..", "bin", "Debug", "net9.0", "Utilisateurs");
+        Console.WriteLine(cheminCarnet + "ll");
         String cheminEnregistrement = cheminCarnet;
         String nom; // variable qui stockera le nom de l'utilisateur
         String nomModif = ""; // variable qui va stocker le nom modifié d'un utilisateur
