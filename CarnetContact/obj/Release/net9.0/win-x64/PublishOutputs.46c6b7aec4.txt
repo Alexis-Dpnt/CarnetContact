@@ -1,0 +1,2 @@
+/Users/alexisdupont/RiderProjects/CarnetContact/CarnetContact/bin/Release/net9.0/win-x64/publish/CarnetContact.pdb
+/Users/alexisdupont/RiderProjects/CarnetContact/CarnetContact/bin/Release/net9.0/win-x64/publish/CarnetContact.exe

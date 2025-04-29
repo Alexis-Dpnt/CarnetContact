@@ -1,8 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "hXyzb+LcwEw=",
+  "dgSpecHash": "S/7YsS6M8Qg=",
   "success": true,
   "projectFilePath": "/Users/alexisdupont/RiderProjects/CarnetContact/CarnetContact/CarnetContact.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "/Users/alexisdupont/.nuget/packages/microsoft.net.illink.tasks/9.0.3/microsoft.net.illink.tasks.9.0.3.nupkg.sha512",
+    "/Users/alexisdupont/.nuget/packages/microsoft.netcore.app.runtime.win-x64/9.0.3/microsoft.netcore.app.runtime.win-x64.9.0.3.nupkg.sha512",
+    "/Users/alexisdupont/.nuget/packages/microsoft.aspnetcore.app.runtime.win-x64/9.0.3/microsoft.aspnetcore.app.runtime.win-x64.9.0.3.nupkg.sha512",
+    "/Users/alexisdupont/.nuget/packages/microsoft.netcore.app.host.win-x64/9.0.3/microsoft.netcore.app.host.win-x64.9.0.3.nupkg.sha512"
+  ],
   "logs": []
 }

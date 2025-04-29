@@ -3,27 +3,24 @@ using CarnetContact;
 using System.Text.Json;
 
 /******************************************************* A FAIRE *******************************************************
- - coder une fonction qui regarde si le contact existe ou pas grace a son num
  - système de mots de passes associé à chaque utilisateur ???
  - soigner l'affichage
- - mettre les commentaires au dessus de toutes les fonctions
- 
- ajouterContact :
-  - faire système qui regarde si le numéro existe deja dans la liste (peut être base de donnee plus tard)
- 
- creerUtilisateur :
-  - message qui dit que l'utilisateur existe deja puis propose de mettre un autre nom
-  
- case 7 :
-  - faire en sorte que ca vienne caherger le nouveau carnet si un chanagement d'utilisateur est effectué
-  
- case 9 :
-  - faire en sorte que quand on change d'utilisateur ca charge le nouveau carnet
-  
+ - carnet partagé peut être plus tard
 */
 public class Program
 {
     /************************************************ Partie Contacts ************************************************/
+
+    // fonction pour regarder si un numero est deja rentre dans le carnet
+    public static bool existeNum(int num, List<Contact> contacts)
+    {
+        foreach (var contact in contacts)
+        {
+            if (contact.Num == num)
+                return true;
+        }
+        return false;
+    }
     
     // fonction pour ajouter les contacts au carnet
     public static void ajouterContact(List<Contact> carnet)
@@ -36,8 +33,13 @@ public class Program
         String email = Console.ReadLine();
         Console.WriteLine("entre le numéro du contact");
         int numero = int.Parse(Console.ReadLine());
-        Contact newContact = new Contact(nom, prenom, email, numero);
-        carnet.Add(newContact);
+        if (!existeNum(numero, carnet))
+        {
+            Contact newContact = new Contact(nom, prenom, email, numero);
+            carnet.Add(newContact);
+        }
+        else
+            Console.WriteLine("Ce numero est déjà enregistré");
     }
     
     // fonction pour afficher tous les contacts
@@ -179,24 +181,35 @@ public class Program
         }
     }
 
-    // fonction pour afficher les infos sur un utilisateur
-    public static void afficherInfoUtilisateur(Utilisateur usr)
-    {
-        Console.WriteLine($"nom d'utilisateur {usr.getNomUser}");
-    }
-
     // fonction pour modifier les infos sur un utilisateur
-    public static void modifierInfoUtilisateur(Utilisateur usr)
+    public static String modifierInfoUtilisateur(Utilisateur usr)
     {
         Console.WriteLine("quel nom veux tu donner a cet utilisateur");
         usr.setNomUser(Console.ReadLine());
+        return usr.getNomUser();
     }
 
+    // fonction qui regarde si un utilisateur existe deja
+    public static bool existeUtilisateur(String nom, List<Utilisateur> utilisateurs)
+    {
+        foreach (var usr in utilisateurs)
+        {
+            if (usr.getNomUser().Equals(nom))
+                return true;
+        }
+        return false;
+    }
+    
     // fonction pour créer un nouvel utilisateur
     public static void creerUtilisateur(String nom, List<Utilisateur> utilisateurs)
     {
-        Utilisateur usr = new Utilisateur(nom);
-        utilisateurs.Add(usr);
+        if (!existeUtilisateur(nom, utilisateurs))
+        {
+            Utilisateur usr = new Utilisateur(nom);
+            utilisateurs.Add(usr);
+        }
+        else
+            Console.WriteLine("Cet Utilisateur existe déjà");
     }
     
     // fonction qui retourne un utilisateur en fonction de son index
@@ -234,6 +247,7 @@ public class Program
     
     /******************************************* Partie gestion de fichiers *******************************************/
 
+    // fonction qui creer un dossier
     public static int creerDir(String nom, String chemin)
     {
         String cheminDossier = Path.Combine(chemin, nom);
@@ -260,17 +274,6 @@ public class Program
             return true;
         return false;
     }
-    
-    // fonction qui compte le nombre de dossiers dans un dossier
-    public static int compterDir(String nom)
-    {
-        String dossierUtilisateur = Path.Combine(Directory.GetCurrentDirectory(), nom);
-
-        int compteur = Directory.EnumerateDirectories(dossierUtilisateur).Count();
-
-        Console.WriteLine($"Il y a {compteur} dossiers dans le dossier utilisateur.");
-        return compteur;
-    }
 
     // fonction qui prend le nom des dossiers utilisateurs et enregistre les utilisateurs dans la liste
     public static void remplirListDir(List<Utilisateur> utilisateurs, String chemin)
@@ -285,29 +288,47 @@ public class Program
     }
 
     // ouvre le fichier a Utilisateurs/chemin puis remplis la liste avec les contacts du fichier
- public static List<Contact> remplirCarnet(String chemin)
- {
-     String path = Path.Combine(chemin, "contact.json");
-     try
-     {
-         return JsonSerializer.Deserialize<List<Contact>>(File.ReadAllText(path)) ?? new List<Contact>();
-     }
-     catch (Exception ex)
-     {
-         Console.WriteLine($"Erreur lors de la désérialisation : {ex.Message}");
-         return new List<Contact>();
-     }
- }
+    public static List<Contact> remplirCarnet(String chemin)
+    { 
+        String path = Path.Combine(chemin, "contact.json");
+        try
+        { 
+            return JsonSerializer.Deserialize<List<Contact>>(File.ReadAllText(path)) ?? new List<Contact>();
+        }
+        catch (Exception ex)
+        {
+             Console.WriteLine($"Erreur lors de la désérialisation : {ex.Message}");
+            return new List<Contact>();
+        }
+    }
 
+    // fonction qui supprime un dossier
     public static int supprimerDir(String nom, String chemin)
     {
         String path = Path.Combine(chemin, nom);
-        Directory.Delete(path);
-        if (existeDir(nom, chemin))
+        try
+        {
+            Directory.Delete(path, true);
+            if (existeDir(nom, chemin))
+                return -1;
+            return 0;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erreur lors de la suppression du dossier : {ex.Message}");
             return -1;
-        return 0;
+        }
     }
 
+    // fonction qui sert à modifier le nom d'un dossier
+    public static void modifierNomDir(String nomSrc, String nomDest, String chemin)
+    {
+        String pathSrc = Path.Combine(chemin, nomSrc);
+        String pathDest = Path.Combine(chemin, nomDest);
+        Directory.Move(pathSrc, pathDest);
+    }
+
+    // fonction qui sert a enregistrer la liste de constacts dans un fichier Json
     public static void toJson(List<Contact> contacts, String chemin)
     {
         String json = JsonSerializer.Serialize(contacts);
@@ -334,19 +355,18 @@ public class Program
     
     public static void Main(string[] args)
     {
-        String currentUtilisateur = ""; // utilisateur en cours d'utilisation (peut etre chager le type pour le mettre en Utilisateur)
+        String currentUtilisateur = ""; // utilisateur en cours d'utilisation
         String utilisateurChange = ""; // variable temporaire pour faire le changement d'utilisateur
         String cheminCarnet = Path.Combine(Directory.GetCurrentDirectory(), "Utilisateurs"); // dossier où il y a tous les dossiers utilisateurs
         String cheminEnregistrement = cheminCarnet;
+        String nom; // variable qui stockera le nom de l'utilisateur
+        String nomModif = ""; // variable qui va stocker le nom modifié d'un utilisateur
         List<Utilisateur> utilisateurs = new List<Utilisateur>();
         List<Contact> carnet = new List<Contact>();
-        int choix = 0; // varible pour le choix de l'option du menu
-        int num; // variable qui stockera le numero du contact
-        String nom; // variable qoui stockera le nom de l'utilisateur
+        int choix = 0; // variable pour le choix de l'option du menu
+        int num; // variable qui stockera le numéro du contact
         int index; // variable qui stockera l'index dans la liste d'un utilisateur
         
-        
-        // remplir la liste des utilisateurs avec les dossier contenu dans Utilisateurs
         remplirListDir(utilisateurs, cheminCarnet);
         if (utilisateurs.Count > 0)
         {
@@ -423,7 +443,6 @@ public class Program
                 case 5:
                     afficherInfoContact(retournerContact(carnet));
                     break;
-                
                 case 6:
                     Console.WriteLine("quel est le nom de l'utilisateur que tu veux modifier ?");
                     nom = Console.ReadLine();
@@ -431,19 +450,29 @@ public class Program
                     index = indexUtilisateur(nom, utilisateurs);
                     if (index != -1)
                     {
-                        usr = utilisateurs[index];
-                        modifierInfoUtilisateur(usr);
+                        Console.WriteLine("quel nom veux tu donner a cet utilisateur ?");
+                        nomModif = Console.ReadLine();
+                        modifierNomDir(nom, nomModif, cheminCarnet);
+                        if (existeDir(nomModif, cheminCarnet))
+                        {
+                            usr = utilisateurs[index];
+                            modifierInfoUtilisateur(usr);
+                            Console.WriteLine("modification effectuée");
+                        }
+                        else
+                            Console.WriteLine("modification fail");
+                        if (currentUtilisateur == nom)
+                            currentUtilisateur = nomModif;
                     }
                     else
                         Console.WriteLine("l'utilisateur n'existe pas");
                     break;
-                
                 case 7:
                     Console.WriteLine("quel nom veux tu donner a ton utilisateur ?");
                     nom = Console.ReadLine();
                     creerUtilisateur(nom, utilisateurs);
                     if (creerDir(nom, cheminCarnet) != -1)
-                        currentUtilisateur = nom;
+                        Console.WriteLine("l'utilisateur à bien été crée");
                     else
                     {
                         Console.WriteLine("impossible de créer l'utilisateur");
@@ -451,52 +480,52 @@ public class Program
                             utilisateurs.RemoveAt(utilisateurs.Count - 1);
                         return;
                     }
-                    Console.WriteLine("veux tu changer d'utilisateur ?");
-                    if (Console.ReadKey().Key == ConsoleKey.Y)
+                    Console.WriteLine("veux tu te connecter a cet utilisateur ?");
+                    if (Console.ReadLine() == "y" || Console.ReadLine() == "Y")
                     {
-                        utilisateurChange = changerUtilisateur(currentUtilisateur, utilisateurs);
+                        currentUtilisateur = nom;
+                        cheminEnregistrement = Path.Combine(cheminCarnet, currentUtilisateur);
+                        carnet = remplirCarnet(cheminEnregistrement);
+                    }
+                    break;
+                case 8:
+                    listerUtilisateurs(utilisateurs);
+                    break;
+                case 9:
+                    utilisateurChange = changerUtilisateur(currentUtilisateur, utilisateurs);
+                    if (utilisateurChange.Equals(currentUtilisateur))
+                        Console.WriteLine("tu est déjà connecté à cet utilisateur");
+                    else
+                    {
                         if (utilisateurChange != null)
                         {
-                            if (existeFile(utilisateurChange, cheminCarnet))
+                            if (existeDir(utilisateurChange, cheminCarnet))
                             {
-                                Console.WriteLine($"vous etes maintenant connecté en tant que {utilisateurChange}");
+                                Console.WriteLine($"vous êtes maintenant connecté en tant que {utilisateurChange}");
                                 currentUtilisateur = utilisateurChange;
+                                cheminEnregistrement = Path.Combine(cheminCarnet, currentUtilisateur);
+                                carnet = remplirCarnet(cheminEnregistrement);
                             }
                             else
                                 Console.WriteLine("l'utilisateur n'existe pas");
                         }
                     }
-                    
                     break;
-                case 8:
-                    listerUtilisateurs(utilisateurs);
-                    break;
-                
-                case 9:
-                    utilisateurChange = changerUtilisateur(currentUtilisateur, utilisateurs);
-                    if (utilisateurChange != null)
-                    {
-                        if (existeFile(utilisateurChange, cheminCarnet))
-                        {
-                            Console.WriteLine($"vous etes maintenant connecté en tant que {utilisateurChange}");
-                            currentUtilisateur = utilisateurChange;
-                            cheminEnregistrement = Path.Combine(cheminCarnet, currentUtilisateur);
-                        }
-                        else
-                            Console.WriteLine("l'utilisateur n'existe pas");
-                    }
-                    break;
-                
                 case 10:
                     Console.WriteLine("quel est le nom de l'utilisateur que tu veux supprimer ?");
                     nom = Console.ReadLine();
-                    index = indexUtilisateur(nom, utilisateurs);
-                    if (index != -1)
-                        utilisateurs.RemoveAt(index);
-                    if (supprimerDir(nom, cheminCarnet) != 0)
-                        Console.WriteLine("l'utilisateur n'a pas pu être supprimer");
+                    if (!(nom == currentUtilisateur))
+                    {
+                        index = indexUtilisateur(nom, utilisateurs);
+                        if (index != -1)
+                            utilisateurs.RemoveAt(index);
+                        if (supprimerDir(nom, cheminCarnet) != 0)
+                            Console.WriteLine("l'utilisateur n'a pas pu être supprimer");
+                        else
+                            Console.WriteLine("L'utilisateur a bien été supprimé");
+                    }
                     else
-                        Console.WriteLine("L'utilisateur a bien été supprimé");
+                        Console.WriteLine("tu ne peut pas supprimer cet utilisateur car tu y est connecté");
                     break;
                 
                 case 11:
