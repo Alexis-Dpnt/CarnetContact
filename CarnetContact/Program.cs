@@ -538,6 +538,5 @@ public class Program
                     break;
             }
         }
-        Console.ReadLine();
     }
 }
