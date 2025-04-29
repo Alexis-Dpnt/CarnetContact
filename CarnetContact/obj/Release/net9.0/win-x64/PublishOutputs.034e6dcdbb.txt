@@ -1,0 +1,5 @@
+/Users/alexisdupont/RiderProjects/CarnetContact/CarnetContact/App/CarnetContact.exe
+/Users/alexisdupont/RiderProjects/CarnetContact/CarnetContact/App/CarnetContact.dll
+/Users/alexisdupont/RiderProjects/CarnetContact/CarnetContact/App/CarnetContact.deps.json
+/Users/alexisdupont/RiderProjects/CarnetContact/CarnetContact/App/CarnetContact.runtimeconfig.json
+/Users/alexisdupont/RiderProjects/CarnetContact/CarnetContact/App/CarnetContact.pdb

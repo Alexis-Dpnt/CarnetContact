@@ -6,6 +6,10 @@ using System.Text.Json;
  - système de mots de passes associé à chaque utilisateur ???
  - soigner l'affichage
  - carnet partagé peut être plus tard
+ 
+ 
+ ⚠ chanager chemins car ca currentdirectory prend de la ou est le .exe
+ 
 */
 public class Program
 {
